@@ -1,0 +1,47 @@
+{% extends "template.html" %}
+{% block body %}
+<div class="row">
+    <div class="col-sm-12"> 
+        <h3 id="reg_header">Registration Form</h3>
+        <form id="reg-form" class="form-horizontal" id="url_form" name="url_form" method="post" action="/register">
+                {{ form.csrf_token }}
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="user">User Name:</label>
+                    <div class="col-sm-4">
+                        {{ form.username(class='form-control',id="user", placeholder='Enter your name')}}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="email">Email:</label>
+                    <div class="col-sm-4">
+                        {{ form.email(class='form-control',id="email", placeholder='Enter email ID')}}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="pwd">Password:</label>
+                    <div class="col-sm-4">          
+                        {{ form.password(class='form-control',id="pwd", placeholder='Enter Password')}}
+                    </div>
+                </div>
+
+                <div class="form-group">        
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <div class="checkbox">
+                            <label><input type="checkbox" name="remember"> Remember me</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">        
+                    <div class="col-sm-offset-2 col-sm-10">
+                        {{ form.submit(class="btn btn-default" ) }}
+                        <button class="btn btn-default">Login</button>
+                        <input type="reset" class="btn btn-default" id="url_input_box" />
+                    </div>
+                </div>
+        </form>     
+    </div>
+</div>
+{% endblock %}

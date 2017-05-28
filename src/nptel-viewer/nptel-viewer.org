@@ -1,0 +1,234 @@
+#+title: NPTEL Viewer web application
+#+AUTHOR: Sadhana
+#+DATE: [2017-05-25 Thu]
+#+PROPERTY: results output
+#+PROPERTY: exports code
+#+SETUPFILE: ../org-templates/level-1.org
+#+options: ^:nil
+#+LATEX: Literal LaTeX code for export
+
+* Role
+
++ The role of this Viewer application is to render the renarrated
+  content of a given NPTEL course for a given end-user / student. If
+  there are alternate views that are possible for a course, then these
+  alternate views must be faciliated through the Viewer application.
++ End-user registers into the system as a new user
++ End-user logs in (login process)
++ End-user enters the name of the NPTEL course she wishes to browse
++ End-user is presented with a renarrated course or with some choices
+  of renarrated courses.
++ End-user chooses a renarration.
++ While showing the renarration, the Viewer would be shown the course
+  as per the SSS file
++ A UI on the Viewer would allow for the navigation
++ An Annolet on the Viewer would also allow the End-user to modify the
+  generated page contents.
++ Output is the NPTEL video renarration.
+
+
+* Imports
+
+** Imports for Python API
+
+Following imports are used for the flask app.
+
+#+BEGIN_SRC python :tangle ../../code/nptel-viewer/app.py :eval no
+
+from flask import Flask, request, render_template, make_response, session, jsonify, g, url_for, send_from_directory, \
+    redirect
+from flask_wtf import Form
+from wtforms import StringField,PasswordField, SubmitField, validators, ValidationError
+from wtforms.validators import Required,URL
+from wtforms.fields.html5 import EmailField
+from flask_cors import CORS
+import conf
+
+app = Flask(__name__)
+CORS(app)
+
+app.config['SECRET_KEY'] = conf.SECRET_KEY[0]
+
+#+END_SRC
+
+
+* Forms
+
+** Login Form
+
+This form is used to allow the user to login.
+
+#+BEGIN_SRC python :tangle ../../code/nptel-viewer/app.py :eval no
+
+class loginForm(Form):
+    username = StringField('Username', [validators.Length(min=4, max=25)])
+    password = PasswordField('New Password', [validators.DataRequired()])
+    login = SubmitField("Login")
+
+#+END_SRC
+
+
+** Registration form
+
+This form is used to take the user details.
++ It is mandatory for the user to register.
+
+#+BEGIN_SRC python :tangle ../../code/nptel-viewer/app.py :eval no
+
+class RegistrationForm(Form):
+    username = StringField('Username', [validators.DataRequired(message="required"), validators.Length(min=4, max=25)])
+    email = EmailField('Email Address', [validators.DataRequired(message="required"), validators.Email(), validators.Length(min=6, max=35)])
+    discipline = StringField('Discipline', [validators.DataRequired(message="required"), validators.Length(min=1, max=35)])
+    institute = StringField('Institute', [validators.DataRequired(message="required"), validators.Length(min=1, max=35)])
+    password = PasswordField('Password', [validators.DataRequired(message="required"), validators.Length(min=6, max=20)])
+    signup = SubmitField("Sign Up")
+
+#+END_SRC
+
+
+** Url Form
+
+This form is used to take the input from the user .
++ It is mandatory for the user to enter the URL.
+
+#+BEGIN_SRC python :tangle ../../code/nptel-viewer/app.py :eval no
+
+class url_form(Form):
+    url = StringField('enter URL', validators=[Required(message="required"),URL(message="invalid input"),])
+    submit = SubmitField("Renarrate")
+
+#+END_SRC
+
+
+* APIs
+
+** Login API
+
+This API renders the login form.
++ validates the user credentials and allows the user to login.
+
+#+BEGIN_SRC python :tangle ../../code/nptel-viewer/app.py :eval no
+
+@app.route('/login', methods=['GET','POST'])
+
+# first page that will ask user to enter the details
+def login():
+    form = loginForm()
+    if request.method == 'GET':
+        return render_template('login.html', form = form)
+
+#+END_SRC
+
+
+** Registration API
+
+This API renders the registration form for taking the user details
+from the enduser and validates the inputs entered by the end-user.
+
+#+BEGIN_SRC python :tangle ../../code/nptel-viewer/app.py :eval no
+
+@app.route('/register', methods=['GET','POST'])
+
+# first page that will ask user to enter the details
+def registration():
+    form = RegistrationForm()
+    if request.method == 'GET':
+       return render_template('registration.html', form = form)
+    elif request.method == 'POST':
+       return render_template('success.html')
+      #     user = User(form.username.data, form.email.data, form.discipline.data, form.institute.data, 
+      #                 form.password.data)
+      #     db_session.add(user)
+      #     flash('Thanks for registering')
+      #     return redirect(url_for('login'))
+      # return render_template('register.html', form=form)
+       
+#+END_SRC
+
+
+** Url API
+
+Renders the form for taking input URL.
+
+#+BEGIN_SRC python :tangle ../../code/nptel-viewer/app.py :eval no
+
+@app.route('/', methods=['GET','POST'])
+
+# first page that will ask user to enter the URL
+def index():
+    form = url_form()
+    if request.method == 'POST':
+        if form.validate() == False:
+            return render_template('index.html', form=form)  # if URL is invalid, it will return to index.
+        elif form.validate_on_submit():
+	    return "url is valid"
+    elif request.method == 'GET':
+        return render_template('index.html', form = form)
+       
+#+END_SRC
+
+
+* configuration
+
+Setting up the secret key for your application
+
+#+BEGIN_SRC python :tangle ../../code/nptel-viewer/conf.py :eval no
+
+SECRET_KEY = ('',) # some long string
+
+#+END_SRC
+
+
+* run
+
+Running the application.
+
+#+BEGIN_SRC python :tangle ../../code/nptel-viewer/app.py :eval no
+
+if __name__ == '__main__':
+    app.run(host="127.0.0.1", port="8000")
+
+#+END_SRC
+
+
+* Dependencies
+
+Following lists the dependencies required for the running the application
+
+#+BEGIN_SRC python :tangle ../../code/nptel-viewer/setup.sh :eval no
+
+#! bash script for setting up enviornment for flask app
+
+sudo apt-get install python-virtualenv
+
+virtualenv nptelworkshop
+
+nptelworkshop/bin/pip install flask
+
+nptelworkshop/bin/pip install flask-wtf
+
+nptelworkshop/bin/pip install conf
+
+nptelworkshop/bin/pip install -U flask-cors
+
+#+END_SRC
+
+
+* Setup the server
+
+The following steps are needed for setting up the server
+
++ run the file setup.sh by command 
+#+BEGIN_EXAMPLE 
+bash setup.sh
+#+END_EXAMPLE
+
++ Activate the virtual enviornment by command 
+#+BEGIN_EXAMPLE
+source nptelworkshop/bin/activate
+#+END_EXAMPLE
+
++ run the application by command
+#+BEGIN_EXAMPLE
+python app.py
+#+END_EXAMPLE

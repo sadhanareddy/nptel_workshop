@@ -1,0 +1,24 @@
+{% extends "template.html" %}
+{% block body %}
+	
+	<div>
+		<form id="urlform" class="form-horizontal" role="form" method="post" action="/" onload="form.reset();">
+			{{ form.csrf_token }}
+            <div class="form-group">
+                <label for="url" class="col-md-4 control-label">Enter url:</label>
+                <div class="col-md-4">
+                    {{ form.url(class='form-control',id="url", placeholder='Enter url')}}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <!-- Button -->                                        
+                <div class="col-md-offset-5 col-md-9">
+                    {{ form.submit(class='btn btn-primary',id="btn-submit")}}
+                    <input type="reset" class="btn btn-primary" id="url_input_box" />
+                </div>
+            </div>
+        </form>
+	</div>
+
+{% endblock %}

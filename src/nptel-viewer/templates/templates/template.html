@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Nptel-Viewer </title>
+    <!-- Latest compiled and minified CSS -->
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+    integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
+    crossorigin="anonymous"> {% block head %} {% endblock %}
+</head>
+
+<style type="text/css">
+    #nptel-header{
+        font-family: "Times New Roman", Georgia, Serif;
+        color: #000080;
+    }
+    #overview{
+        font-size: 95%;
+    }
+    #reg_header{
+        font-family: "Times New Roman", Georgia, Serif;
+        text-align: center;
+        color: #000080;
+    }
+    #reg-form{
+        /*text-align: center;*/
+        margin-left: 26%;  
+    }
+</style>
+
+<body>
+
+    <div class="container-fluid">
+        <div class="jumbotron">
+            <h2 id="nptel-header">NPTEL Viewer Studio</h2>
+            <p id="overview">The role of the Viewer is to render the renarrated content of a given
+            NPTEL course for a given end-user / student. If there are alternate views that
+            are possible for a course, then these alternate views must be faciliated
+            through the Viewer.</p>
+        </div>
+        {% block body %}{% endblock %}
+    </div>
+    {% block script %} {% endblock %}
+
+</body>
+
+</html>

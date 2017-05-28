@@ -1,0 +1,43 @@
+{
+		"name": "sadhana",
+		"user_info":	{ 	"user_name"  : "sadhana",
+		               		"institute"  : "IIITH",
+		               		"discipline" : "CSE",
+		               		"year_of_the_course" : 3
+		},
+
+		"course_info":  { 	"course_name": "data_structures",
+	                        "discipline" : "CSE"
+		},
+		
+
+		"event_types":   {
+				"pdf": {
+					"url" : "https://docs.google.com/document/d/1d1ogaQGHJ337pCB8PCdX3Z_O-5LVy2NLAg_CBL1tdFY/pub?embedded=true",
+					"format":"",
+					"width":"",
+					"height":""
+				},
+
+				"ppt": {
+					"url" : "https://docs.google.com/presentation/d/1OvE-lB8iy-M8Pt-X_tz_bwu4eE62KLaNmj6UfOkkelA/embed?start=false&loop=false&delayms=3000",
+					"format": ".pps",
+					"num_of_slides": "2",
+					"start_slide": "1",
+					"end_slide": "2"
+				},
+
+				"video": {
+					"format":"",
+					"duration":"",
+					"start_time":"10",
+					"stop_time":"40"
+				},
+
+				"curator_instructions": {
+					"language": "english",
+					"markup_format": ""
+				}
+		}
+ 	
+}
