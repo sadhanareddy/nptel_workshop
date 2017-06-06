@@ -1,0 +1,51 @@
+{
+		"currator_info": {  "curator_name"  : "Naveen Garg",
+		               		"institute"  : "IIT Delhi",
+		               		"discipline" : "computer science and engineering",
+		               		"course_info": "Introduction to data structures and algorithms",
+		               		"ren_url"  : "http://nptel.ac.in/courses/106102064/",
+		               		"video_url"  : "http://www.youtube.com/v/zWg7U0OEAoE?rel=1&color1=0xcbba9f&color2=0xcbba9f&border=0&fs=1",
+		               		"year_of_course" : "3"
+						},
+
+
+		"event_types":  [
+
+						   {
+							"event" : "1",
+							"media-type": "video",
+							"media-url" : "http://www.youtube.com/v/zWg7U0OEAoE?",
+							"start": "1020",
+							"end": "2020"
+						    },
+				
+				           {
+				           	"event": "2",
+							"media-type": "pdf",
+							"media-url":"https://docs.google.com/document/d/1EiiRgld24sOTdlEp2WPdj4ZAs3gEjVjo5Qzt6JtidRs/pub?embedded=true"
+							},
+
+						   {
+							"event" : "3",
+							"media-type": "ppt",
+							"media-url" : "https://docs.google.com/presentation/d/1OvE-lB8iy-M8Pt-X_tz_bwu4eE62KLaNmj6UfOkkelA/embed?start=false&loop=false&delayms=3000"
+							}
+
+		],
+
+		"conditions": {
+	          "user-info": {
+	                     "user-name": "sadhana",
+	                     "user-college": "iiith",
+	                     "degree-program": "computer science and engineering",
+	                     "year": "3"
+	                     },
+
+	          "env-info": {
+	                    "user-agent" : "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0",
+	                    "time-of-day": "Wed, 23 May 2018 12:14:16 GMT"
+	                    }
+        }
+} 
+
+

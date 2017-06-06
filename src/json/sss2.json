@@ -1,0 +1,45 @@
+{
+		"currator_info":	{"curator_name"  : "Shankar Balachandran",
+		               		"institute"  : "IIT Madras",
+		               		"discipline" : "computer science and engineering",
+		               		"course_info": "Programming, Data structures and Algorithms",
+		               		"nptel_url"  : "http://nptel.ac.in/courses/106106133/",
+		               		"video_url"  : "http://www.youtube.com/v/E32BQE3CP2s?rel=1&color1=0xcbba9f&color2=0xcbba9f&border=0&fs=1",
+		               		"year_of_course" : 3,
+		},
+
+		"event_types":   {
+				"pdf": {
+					"url" : "https://docs.google.com/document/d/1EiiRgld24sOTdlEp2WPdj4ZAs3gEjVjo5Qzt6JtidRs/pub?embedded=true",
+					"format":"",
+					"width":"",
+					"height":""
+				},
+
+				"ppt": {
+					"url" : "https://docs.google.com/presentation/d/1OvE-lB8iy-M8Pt-X_tz_bwu4eE62KLaNmj6UfOkkelA/embed?start=false&loop=false&delayms=3000",
+					"format": ".pps",
+					"num_of_slides": "2",
+					"start_slide": "1",
+					"end_slide": "2"
+				},
+
+				"video": {
+					"format":"",
+					"duration":"",
+					"start_time":"10",
+					"stop_time":"40"
+				},
+
+				"curator_instructions": {
+					"language": "english",
+					"markup_format": ""
+				}
+		},
+
+		"environment_data" : {
+ 			"user-agent" : "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0",
+ 			"tod": "Wed, 23 May 2018 12:14:16 GMT"
+		}
+ 	
+}

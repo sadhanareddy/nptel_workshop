@@ -1,0 +1,13 @@
+{
+		
+		"user_info":	{ 	"user_name"  : "sadhana",
+							"email_id"   : "sadhana@vlabs.ac.in",
+		               		"discipline" : "computer science and engineering",
+		               		"institute"  : "IIITH",
+		               		"year_of_the_course" : 3
+		},
+
+		"environment_info":  {
+			 				"user-agent" : "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0",
+		}
+}
