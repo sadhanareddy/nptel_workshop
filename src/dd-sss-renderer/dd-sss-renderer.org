@@ -1,0 +1,483 @@
+#+TITLE: Detailed Description of the SSS-Renderer
+#+AUTHOR: Sadhana V. and Sai Gollapudi
+#+Date: 30 May, 2017
+
+
+* Introduction
+The sss-renderer has been described at a high level both here and
+here. In this part of the document we are looking into the details of
+the design behind the sss-renderer.
+
+In this description of the sss-renderer we are applying the app to NPTEL video
+course renarration project.
+
+* Imports
+** Imports for Python API
+Following imports are used for the flask app.
+
+#+BEGIN_SRC python :tangle ../../code/dd-sss-renderer/app.py :eval no
+
+from flask import Flask, request, render_template, make_response, session, jsonify, g, url_for, send_from_directory, \
+    redirect
+from flask_wtf import Form
+from wtforms import StringField,PasswordField, SubmitField, validators, ValidationError
+from wtforms.validators import Required,URL
+from wtforms.fields.html5 import EmailField
+from flask_cors import CORS
+import conf
+
+app = Flask(__name__)
+CORS(app)
+
+app.config['SECRET_KEY'] = conf.SECRET_KEY[0]
+
+#+END_SRC
+
+* Modes of Operation
+There are 4 modes of operation for the sss-renderer. They are
+described here.
+
+* Registration Mode
+In the Registration mode, the user is allowed to login into the
+sss-renderer application.  The flow of events (Pseudocode / Algorithm)
+in this *Registration* mode include:
++ Registration Process
+  - present the user with a Registration UI
+  - collect input data
+  - If Registration is sucesss:
+    + persist the input data in database
+    + provide a success page to login with user credentials.
+ 
+* Config Mode
+* View Mode
+In the viewing mode, the user is allowed to view the alternatives / variants
+for a given source.
+
+The flow of events (Pseudocode / Algorithm) in this *view* mode include:
++ Login Process
+  - present the user with a login UI
+  - collect input data
+  - check against NPTEL Database
+  - Is user OK to proceed? 
+    + user is OK case: fetch UserInfo tuple from NPTEL database
+    + user is NOK case: logout and stop the session for this user.
++ Session Setup
+  - start the rules engine. This is needed for the selection of a specific
+    SSS from a choice of many.
+  - gather UserInfo details and fill the Facts data structure. This data
+    structure will be used for doing the conditional checks via the rules
+    engine.
+  - gather Environmental details and fill the facts data structure. This is
+    also used with rules engine for doing the conditional checks against the sss.
++ Selection of Course
+  - user is presented with a UI to allow for the selection of NPTEL
+    course. Outcome of this is a URL.
++ Check for presence of SSS
++ Setup Viewing Space
++ Render SSS as a set of events
+
+* Design Details
+** Registration process
+*** Registration form
+This form is used to take the user details.
++ It is mandatory for the user to register.
+#+BEGIN_SRC python :tangle ../../code/dd-sss-renderer/app.py :eval no
+
+class RegistrationForm(Form):
+    username = StringField('Username', [validators.DataRequired(message="required"), validators.Length(min=4, max=25)])
+    email = EmailField('Email Address', [validators.DataRequired(message="required"), validators.Email(), validators.Length(min=6, max=35)])
+    discipline = StringField('Discipline', [validators.DataRequired(message="required"), validators.Length(min=1, max=35)])
+    institute = StringField('Institute', [validators.DataRequired(message="required"), validators.Length(min=1, max=35)])
+    password = PasswordField('Password', [validators.DataRequired(message="required"), validators.Length(min=6, max=20)])
+    signup = SubmitField("Sign Up")
+
+#+END_SRC
+
+*** Registration API
+This API renders the registration form for taking the details
+from the enduser and validates it.
+
+#+BEGIN_SRC python :tangle ../../code/dd-sss-renderer/app.py :eval no
+
+@app.route('/register', methods=['GET','POST'])
+def registration():
+    form = RegistrationForm()
+    if request.method == 'GET':
+       return render_template('registration.html', form = form)
+    elif request.method == 'POST':
+       return render_template('success.html')
+      #     user = User(form.username.data, form.email.data, form.discipline.data, form.institute.data, 
+      #                 form.password.data)
+      #     db_session.add(user)
+      #     flash('Thanks for registering')
+      #     return redirect(url_for('login'))
+      # return render_template('register.html', form=form)
+       
+#+END_SRC
+
+** Login Process
+Implemented later as lower priority item. As a temporary solution in first
+version we will not do login. In second version we will do login with any name
+and use that for SSS creation. In third version of this process we will
+actually work with a database.
+
+*** Login Form
+This form is used to allow the user to login.
+#+BEGIN_SRC python :tangle ../../code/dd-sss-renderer/app.py :eval no
+
+class loginForm(Form):
+    username = StringField('Username', [validators.Length(min=4, max=25)])
+    password = PasswordField('New Password', [validators.DataRequired()])
+    login = SubmitField("Login")
+
+#+END_SRC
+
+*** Login API
+This API renders the login form.
++ validates the user credentials and allows the user to login.
+#+BEGIN_SRC python :tangle ../../code/dd-sss-renderer/app.py :eval no
+
+@app.route('/login', methods=['GET','POST'])
+
+# first page that will ask user to enter the details
+def login():
+    form = loginForm()
+    if request.method == 'GET':
+        return render_template('login.html', form = form)
+    elif request.method == "POST":
+        return redirect(url_for('index'))
+    
+#+END_SRC
+
+** Session Setup
+*** Rules Engine 
+We need to have a rules engine to run the conditional check on each SSS. The
+conditional check for an SSS in segment 3 of a given SSS file. Also, the SSS
+file is expected to be a JSON data structure which is stored in NPTEL Database.
+
+We propose to use npm rules engine which has been developed for JSON files. See
+this for more tutorials, examples, api for this rules engine. 
+
+npm rules engine can be started like this:
+
+#+BEGIN_SRC:
+
+#+END_SRC:
+
+*** Gathering UserInfo tuple data
+We need to make a call to the NPTEL Database to fetch the user's data. Here is
+the database call to get this
+
+#+BEGIN_SRC:
+
+#+END_SRC:
+
+But this user info needs to be extracted so that we may individual gather and
+look at user's name, instituition info etc. So, we will gather them in our own
+internal data structure like this:
+
+#+BEGIN_SRC:
+
+/* Call Database */
+/* Fetch USerinInfo */
+
+#+END_SRC:
+
+*** Gather Environmental Data
+For the first iteration we are going to only fetch two parameters. They are:
+Type of browser and time of day. The browser info is fetched by ... and time of
+day is gotten by... Note that time of day is related to current time and not
+login time. That is, if a user is logged-in in the morning and is still viewing
+till evening. The conditional check in the evening will use evening time of day
+and not logging time.
+
+** Selection of course
+We are proposing to use WTF forms / text box ... to enable user to type in a
+URL for their selection. The typed in content is checked for ... and then
+stored in ... for subsequent use. Here is the code for that.
+*** Url Form
+This form is used to take the input from the user .
++ It is mandatory for the user to enter the URL.
+#+BEGIN_SRC python :tangle ../../code/dd-sss-renderer/app.py :eval no
+
+class url_form(Form):
+    url = StringField('enter URL', validators=[Required(message="required"),URL(message="invalid input"),])
+    submit = SubmitField("Renarrate")
+
+#+END_SRC
+
+*** API
+Renders the form for taking input URL.
+#+BEGIN_SRC python :tangle ../../code/dd-sss-renderer/app.py :eval no
+
+@app.route('/', methods=['GET','POST'])
+def index():
+    form = url_form()
+    if request.method == 'POST':
+        if form.validate() == False:
+            return render_template('index.html', form=form)  # if URL is invalid, it will return to index.
+        elif form.validate_on_submit():
+	    return "url is valid"
+    elif request.method == 'GET':
+        return render_template('index.html', form = form)
+       
+#+END_SRC
+
+** Check for SSS present
+** Setup Viewing Space
+** Render SSS as a set of events
+For the initial development, we start with the core part of
+sss-renderer app. Here we wanted to test and see if a series of events
+can be presented in sequence in a viewing pane. Our experiment
+consisted of hardcoding a data-structure (to mimic the importing of a
+SSS file) and rendering the contents of this SSS file. In practice,
+(in the future iterations) we aim to get this SSS file from
+sss-database. Currently, for testing purposes, we are using a simple
+JSON object consisting of an array of events. We call this event_list.
+
+For demonstration and testing purposes we are setting up a system to
+render and navigate through the sequence of events present in a
+event_list.
+*** SSS_seg2 json data
+The SSS file comes to us from sss-database. However, for the first
+iteration (and for experimentation purposes) we are now using an
+internal, hard-coded data structure. Here is that code:
+#+BEGIN_SRC js :tangle ../../code/dd-sss-renderer/renderMedia.js :eval no
+var sss_seg2 = {
+
+        "eventinfo":  [
+    		 {
+    		    "media_type": "video",
+    		    "media_url" : "http://www.youtube.com/v/zWg7U0OEAoE?rel=1&color1=0xcbba9f&color2=0xcbba9f&border=0&fs=1",
+    		    "start": "1020",
+    		    "end": "2020"
+    	         },
+    		
+    		 {
+    		     "media_type": "pdf",
+    		     "media_url":"https://docs.google.com/document/d/1EiiRgld24sOTdlEp2WPdj4ZAs3gEjVjo5Qzt6JtidRs/pub?embedded=true"
+    		 },
+
+    	         {
+    		     "media_type": "ppt",
+    		     "media_url" : "https://docs.google.com/presentation/d/1OvE-lB8iy-M8Pt-X_tz_bwu4eE62KLaNmj6UfOkkelA/embed?start=false&loop=false&delayms=3000"
+    		 },
+		 
+		 {
+    		    "media_type": "video",
+    		    "media_url" : "http://www.youtube.com/v/zWg7U0OEAoE?rel=1&color1=0xcbba9f&color2=0xcbba9f&border=0&fs=1",
+    		    "start": "500",
+    		    "end": "1020"
+    	        }
+       ]
+}
+#+END_SRC
+
+*** Function =window.onload= renders the default page in iframe when the page loads. 
+When the renderer is loaded, we load a welcome page to invite the
+users into the session. Here is the code for loading up of the
+default, welcome page.
+
+#+BEGIN_SRC js :tangle ../../code/dd-sss-renderer/renderMedia.js :eval no
+
+window.onload = function(){
+	document.getElementById('player').src ="https://www.w3schools.com/jsref/prop_frame_src.asp"
+}
+
+#+END_SRC
+
+*** Function =renderMedia()= for rendering the events the iframe.
+This is the core rendering function. It displays each event in the
+series of events given in a event_list. The var cur_event is the event
+that we are currently displaying. The buttons prev, next, last are
+relative to that cur_event in the event_list array.
+
+We use var index as a marker to move within the array. Limits of the
+array are checked to ensure that we don't index out of bounds.
+
+Variable new_src is used to identify the new content that we wish to
+display to the user. This is derived from the cur_event. As an event
+can be either a PPT, Video, PDF, we had to switch differently and
+invoke different media players. It is for this reason, we have used a
+switch for this code.
+
+NOTE: Initially we could not get the getElementID() to work inside a
+function. getElementTag() also did not work inside our render
+function. Through experimentation we have learnt that it can only be
+called upon a mouse click (as DOM is updated). For this reason, our
+rendering is now setup in a evenHandler for prev, last, next
+buttons. Also, to allow for access, we made the event_list and index
+global for the same reason. We aim to rectify this in the future.
++ It checks the event_list and displays the event in iframe based on
+  the current index value.
+
+#+BEGIN_SRC js :tangle ../../code/dd-sss-renderer/renderMedia.js :eval no
+var index = 0;
+var event_list = sss_seg2["eventinfo"];
+
+function renderMedia(){
+    if(index >= 0 & index < event_list.length)
+    {
+            console.log("inside ifloop");
+            var cur_event = event_list[index];
+            switch ( cur_event["media_type"] ) {
+                case "video":
+                    new_src= cur_event["media_url"]+'&start='+cur_event["start"]+'&end='+cur_event["end"];
+               
+                    break;
+                case "pdf":
+                    new_src = cur_event["media_url"]
+                    
+                    break;
+                case "ppt":
+                    new_src = cur_event["media_url"] 
+                       
+                    break;
+                default:
+                    alert("ERROR: Unkown Event was asked to be rendered");
+            }
+    }
+	document.getElementById("player").src = new_src;
+}
+#+END_SRC
+
+*** Function =nextSetSource()= called for displaying the next event-type
++ This function is called when the next button is pressed.
+For every click index value gets incremented. Once the index
+value becomes equal to event_list length, index value is set to
+zero. So on the process continues...
+
+#+BEGIN_SRC js :tangle ../../code/dd-sss-renderer/renderMedia.js :eval no
+
+function nextSetSource() {
+    
+	index++;
+	if(index == event_list.length){
+        index = 0;
+    }
+    renderMedia();
+}
+
+#+END_SRC
+
+*** Function =prevSetSource()= called for displaying the previous event-type in iframe
++ This function is called when the previous button is pressed.
+For every click index value gets decremented. Once the index
+value less than zero, index value is set to zero. So on the process continues...
+#+BEGIN_SRC js :tangle ../../code/dd-sss-renderer/renderMedia.js :eval no
+
+function prevSetSource() {
+    
+	index--;
+	if(index < 0){
+        index = 0;
+    }
+
+	renderMedia();
+
+}
+
+#+END_SRC
+
+*** Function =lastSetSource()= called for displaying the last event-type
++ This function is called when the last button is pressed.
+On click event list length gets decremented once and the last event-type in the
+event_list gets displayed in the iframe.
+ 
+#+BEGIN_SRC js :tangle ../../code/dd-sss-renderer/renderMedia.js :eval no
+
+function lastSetSource() {
+    
+	index = event_list.length-1;
+	renderMedia();
+
+}
+
+#+END_SRC
+* configuration
+Setting up the secret key for your application
+#+BEGIN_SRC python :tangle ../../code/dd-sss-renderer/conf.py :eval no
+
+SECRET_KEY = ('',) # some long string
+
+#+END_SRC
+
+* run
+Running the application.
+#+BEGIN_SRC python :tangle ../../code/dd-sss-renderer/app.py :eval no
+
+if __name__ == '__main__':
+    app.run(host="127.0.0.1", port="8000")
+
+#+END_SRC
+
+* Dependencies
+Following lists the dependencies required for running the application
+
+#+BEGIN_SRC python :tangle ../../code/dd-sss-renderer/setup.sh :eval no
+
+#! bash script for setting up enviornment for flask app
+
+sudo apt-get install python-virtualenv
+
+virtualenv sss-renderer 
+
+sss-renderer/bin/pip install flask
+
+sss-renderer/bin/pip install flask-wtf
+
+sss-renderer/bin/pip install conf
+
+sss-renderer/bin/pip install -U flask-cors
+
+#+END_SRC
+
+* Setup the server
+The following steps are needed for setting up the server
+
++ run the file setup.sh by command 
+#+BEGIN_EXAMPLE 
+bash setup.sh
+#+END_EXAMPLE
+
++ Activate the virtual enviornment by command 
+#+BEGIN_EXAMPLE
+source sss-renderer/bin/activate
+#+END_EXAMPLE
+
++ run the application by command
+#+BEGIN_EXAMPLE
+python app.py
+#+END_EXAMPLE
+
+* Implementation Details
+We have used a client-server model with backend in Python Flask and frontend in
+JavaScript. The Python Flask is based on a virtual environment and follows the
+guidelines of app development as given in this tutorial.
+
+The Flask application has this as its imports
+* Test Cases
++ Ensure we are able to create an iframe an change its source.
++ Ensure we are able to render a series of events in viewing space.
++ Previous button should go back in events. Check boundary condition of first event.
+Previous of first event should be indexed to zero.
++ Next button should go forward in events. Check boundary condition of last event.
+Next of last event should be indexed to last event.
++ Last button should go to the last event. Check boundary condtion of
+  last event it should always be set to last index.
+
+* Development Plan
++ First Version
+In the first version we start with the core work which is
+rendering. While rendering we will not acess Databse but will have a
+inbuilt data structure.  It should have previous and next buttons to
+navigate.
+
++ Second Version 
+In this version we will going to work on the rule engine.
+
++ Third Version
+In this version we will integrate with database.
+
++ Fourth version
+In this version we will work with login and registration.

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>sss-renderer</title>
+    <!-- Latest compiled and minified CSS -->
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+    integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
+    crossorigin="anonymous">
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> 
+    {% block head %} {% endblock %}
+</head>
+
+<style type="text/css">
+    header{
+        background: black;
+        color: white;
+    }
+    #renderer-header{
+        font-family: Arial, Helvetica, sans-serif;
+        color: #000080;
+    }
+    #overview{
+        font-size: 130%;
+    }
+    header {
+      background-color: #474e5d; /* Dark Blue */
+      color: #ffffff;
+    }
+    /* Add a dark background color to the footer */
+    footer {
+        background-color: #474e5d;
+        color: #f5f5f5;
+        padding: 32px;
+    }
+    footer a {
+        color: #f5f5f5;
+    }
+    footer a:hover {
+        color: #777;
+        text-decoration: none;
+    }
+    #reg_header{
+        font-family: "Times New Roman", Georgia, Serif;
+        text-align: center;
+        color: #000080;
+    }
+    #reg-form{
+        /*text-align: center;*/
+        margin-left: 26%;  
+    }
+    #success_page{
+        color: #000080;
+        padding: 9%;
+        text-align: center;
+    }
+    #urlform{
+        padding: 7%;
+    }
+</style>
+
+<body>
+
+    <div class="container-fluid">
+        <header>
+            <div class="container-fluid bg-2 text-center">
+                <h3>SSS Renderer Studio</h3>
+            </div>
+        </header>
+
+        <div class="jumbotron">
+            <h3 id="renderer-header">sss-renderer</h3>
+            <p id="overview">The role of the renderer is to render the renarrated content of a given
+            NPTEL course for a given end-user / student. If there are alternate views that
+            are possible for a course, then these alternate views must be faciliated
+            through the renderer.</p>
+        </div>
+        {% block body %}{% endblock %}
+        <!-- Footer -->
+        <footer class="text-center">
+            <!-- <a class="up-arrow" href="#myPage" data-toggle="tooltip" title="TO TOP">
+            <span class="glyphicon glyphicon-chevron-up"></span>
+            </a><br><br> -->
+            <!-- <p><a href="https://www.w3schools.com" data-toggle="tooltip" title="Visit w3schools">www.w3schools.com</a></p> -->
+            <p>Posted by: </p>
+            <p>Contact information: <a href="mailto:someone@example.com">someone@example.com</a>.</p>
+        </footer>
+    </div>
+
+    <!-- <script>
+        $(document).ready(function(){
+            // Initialize Tooltip
+            $('[data-toggle="tooltip"]').tooltip();
+        })
+    </script> -->
+    {% block script %} {% endblock %}
+
+</body>
+
+</html>
